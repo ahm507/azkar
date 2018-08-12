@@ -36,27 +36,8 @@ def strip_diacritics(text):
         return ''
 
 
-# Note: make file name start with 001, up to 114 to ensure test results are sorted properly.
 
-
-file_names = ["Introduction.txt",
-              "18-Kahf.txt",
-              "50-Qaf.txt",
-              "54-Qamar.txt",
-              "112-Elekhlas.txt",
-              "References.html"]
-
-
-# file_names = [
-#
-#
-#
-#               "112-Elekhlas.txt"
-#               ]
-
-
-
-# text_file_name = "18-Kahf.txt"
+file_names = ["azkar.txt"]
 sqlite_name = 'books.sqlite'
 
 print ("import text files and insert records into sqlite file")
