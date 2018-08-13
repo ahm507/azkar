@@ -78,8 +78,12 @@ public class MainActivity extends AppCompatActivity
 		//Open DB and display initial view
 		booksService = new BooksTreeService(this);
 		booksService.open();
-		displayKids("", "");
+        displayHomePage();
 	}
+
+	public void displayHomePage() {
+        displayKids("azkar_txt", "0");
+    }
 
 	@Override
 	protected void onDestroy() {
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_home_screen:
                 historyStack.push(curPageId);
-                displayKids("", "");
+                displayHomePage();
                 findViewById(R.id.textViewDisplay).setVisibility(View.GONE);
                 findViewById(R.id.listViewTabweeb).setVisibility(View.VISIBLE);
                 return true;
