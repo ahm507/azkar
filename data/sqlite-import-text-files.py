@@ -137,7 +137,7 @@ def convert_text_to_sqlite(file_names, sqlite_name):
 
 
 file_names = ["azkar.txt"]
-sqlite_name = 'books.sqlite'
+sqlite_name = 'azkar.sqlite'
 
 convert_text_to_sqlite(file_names, sqlite_name)
 
