@@ -63,7 +63,7 @@ def convert_text_to_sqlite(file_names, sqlite_name):
         line = u""
         stack = []
         stack.append("NO_PARENT")
-        current_header = u"H1"
+        current_header_level = u"H1"
 
         with open(text_file_name, 'rU') as file:
             file.readlines
@@ -104,16 +104,16 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                             #sys.stdout.write('.')
                             sys.stdout.flush()
                             #handle parent id
-                            if line.strip() > current_header:
-                                print "Lower level : new level=", line, "; current level", current_header
+                            if line.strip() > current_header_level:
+                                print "Lower level : new level=", line, "; current level", current_header_level
                                 stack.append(page_id)
-                                current_header = line #update current line
-                            elif line.strip() < current_header:
-                                print "Higher level: new level=", line, "; current level", current_header
-                                current_header = line
+                                current_header_level = line #update current line
+                            elif line.strip() < current_header_level:
+                                print "Higher level: new level=", line, "; current level", current_header_level
+                                current_header_level = line
                                 stack.pop()
                             else:
-                                print "Same level  :", line, ";",  current_header
+                                print "Same level  :", line, ";",  current_header_level
 
                             page_id += 1
 
