@@ -36,6 +36,29 @@ def strip_diacritics(text):
         return ''
 
 
+def store_record(cur, record, page_id, parent_id, book_code):
+
+    # print "line is [", line, "]"
+    # handle stack of parent ids
+    #split lines to extract first line as title
+    if(len(record) > 0) : # if empty, just skip it
+        # print "[", record, "]"
+        lines = record.splitlines() #split on new line
+        # print "lines count is", len(lines)
+        title = lines[0]
+        # print "title is:", title
+        lines[0] = ""
+        joinedData = ""
+        for single_line in lines:
+            joinedData += " " + single_line
+
+        record_fts = strip_diacritics(unicode(joinedData))
+        topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
+        print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title  
+        cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
+        
+
+
 def convert_text_to_sqlite(file_names, sqlite_name): 
 
     print ("import text files and insert records into sqlite file")
@@ -81,41 +104,27 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                         # print "line is [", line, "]"
                         # handle stack of parent ids
                         line = line.strip()
-                        #split lines to extract first line as title
-                        if(len(record) > 0) : # if empty, just skip it
-                            # print "[", record, "]"
-                            lines = record.splitlines() #split on new line
-                            # print "lines count is", len(lines)
-                            title = lines[0]
-                            # print "title is:", title
-                            lines[0] = ""
-                            joinedData = ""
-                            for single_line in lines:
-                                joinedData += " " + single_line
+                        parent_id = stack[len(stack)-1]
+                        store_record(cur, record, page_id, parent_id, book_code)
+                            
+                        record = "" # for the new line processing
+                        # print page_id
+                        # print record
+                        #sys.stdout.write('.')
+                        sys.stdout.flush()
+                        #handle parent id
+                        if line.strip() > current_header:
+                            print "Lower level : new level=", line, "; current level", current_header
+                            stack.append(page_id)
+                            current_header = line #update current line
+                        elif line.strip() < current_header:
+                            print "Higher level: new level=", line, "; current level", current_header
+                            current_header = line
+                            stack.pop()
+                        else:
+                            print "Same level  :", line, ";",  current_header
 
-                            record_fts = strip_diacritics(unicode(joinedData))
-                            parent_id = stack[len(stack)-1]
-                            topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
-                            print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title  
-                            cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
-                            record = "" # for the new line processing
-                            # print page_id
-                            # print record
-                            #sys.stdout.write('.')
-                            sys.stdout.flush()
-                            #handle parent id
-                            if line.strip() > current_header:
-                                print "Lower level : new level=", line, "; current level", current_header
-                                stack.append(page_id)
-                                current_header = line #update current line
-                            elif line.strip() < current_header:
-                                print "Higher level: new level=", line, "; current level", current_header
-                                current_header = line
-                                stack.pop()
-                            else:
-                                print "Same level  :", line, ";",  current_header
-
-                            page_id += 1
+                        page_id += 1
 
 
         # Last record handling
