@@ -98,20 +98,24 @@ for text_file_name in file_names:
                         record_fts = strip_diacritics(unicode(joinedData))
                         parent_id = stack[len(stack)-1]
                         topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
+                        print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title  
                         cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
                         record = "" # for the new line processing
                         # print page_id
                         # print record
-                        sys.stdout.write('.')
+                        #sys.stdout.write('.')
                         sys.stdout.flush()
                         #handle parent id
                         if line.strip() > current_header:
-                            print "stack append", line, current_header
+                            print "Lower level : new level=", line, "; current level", current_header
                             stack.append(page_id)
                             current_header = line #update current line
                         elif line.strip() < current_header:
-                            current_header = stack.pop()
-                            print "stack pop"
+                            print "Higher level: new level=", line, "; current level", current_header
+                            current_header = line
+                            stack.pop()
+                        else:
+                            print "Same level  :", line, ";",  current_header
 
                         page_id += 1
 
