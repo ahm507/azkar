@@ -36,11 +36,7 @@ def strip_diacritics(text):
         return ''
 
 
-def convert_text_to_sqlite(): 
-
-
-    file_names = ["azkar.txt"]
-    sqlite_name = 'books.sqlite'
+def convert_text_to_sqlite(file_names, sqlite_name): 
 
     print ("import text files and insert records into sqlite file")
 
@@ -138,5 +134,10 @@ def convert_text_to_sqlite():
 
 
 ##################################################################################
- 
-convert_text_to_sqlite()
+
+
+file_names = ["azkar.txt"]
+sqlite_name = 'books.sqlite'
+
+convert_text_to_sqlite(file_names, sqlite_name)
+
