@@ -36,6 +36,12 @@ def strip_diacritics(text):
         return ''
 
 
+def get_pop_count(cur_level, new_level):
+    cur_level = cur_level.replace("H", "");
+    new_level = new_level.replace("H", "")
+    return int(cur_level) - int(new_level)
+
+
 def convert_text_to_sqlite(file_names, sqlite_name): 
 
     print ("import text files and insert records into sqlite file")
@@ -110,8 +116,12 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                                 current_header_level = line #update current line
                             elif line.strip() < current_header_level:
                                 print "Higher level: new level=", line, "; current level", current_header_level
+                                pop_count = get_pop_count(current_header_level, line)
                                 current_header_level = line
-                                stack.pop()
+                                print "poping count", pop_count
+                                while pop_count > 0:
+                                    stack.pop()
+                                    pop_count -= 1
                             else:
                                 print "Same level  :", line, ";",  current_header_level
 
