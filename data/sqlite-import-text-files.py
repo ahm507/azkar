@@ -70,7 +70,6 @@ def convert_text_to_sqlite(file_names, sqlite_name):
 
     page_id = 0
     book_index = 1
-# book_code_prefix = u"soura"
 
     for text_file_name in file_names:
         print "\nfile name:", text_file_name
@@ -78,9 +77,8 @@ def convert_text_to_sqlite(file_names, sqlite_name):
         title =u""
         page =u""
         page_fts =u""
-        # book_code =  book_code_prefix + str(book_index)
         book_code = text_file_name.replace(".", "_").replace("-", "_")
-        print "working on file", book_code
+        #print "working on file", book_code
         book_index += 1
         record =u""
         line = u""
@@ -111,7 +109,7 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                         # print page_id
                         # print record
                         #sys.stdout.write('.')
-                        sys.stdout.flush()
+                        #sys.stdout.flush()
                         #handle parent id
                         if line.strip() > current_header:
                             print "Lower level : new level=", line, "; current level", current_header
@@ -132,14 +130,13 @@ def convert_text_to_sqlite(file_names, sqlite_name):
             # page_fts = remove_vowels(record)
             # topic = (page_id, parent_id, book_code, "", "", "")
             # cur.execute('insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
-
+        print "Warning: you must add empty node such as L1 at the end to flush last record"
 
     conn.commit()
     conn.close()  # call basic function
 
     print " "
     print "Conversion completed for records counted:" + str(page_id)
-
 
 
 ##################################################################################
