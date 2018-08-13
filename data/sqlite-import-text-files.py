@@ -36,99 +36,107 @@ def strip_diacritics(text):
         return ''
 
 
+def convert_text_to_sqlite(): 
 
-file_names = ["azkar.txt"]
-sqlite_name = 'books.sqlite'
 
-print ("import text files and insert records into sqlite file")
+    file_names = ["azkar.txt"]
+    sqlite_name = 'books.sqlite'
 
-remove_database_records(sqlite_name)
+    print ("import text files and insert records into sqlite file")
 
-conn = sqlite3.connect(sqlite_name)
-cur = conn.cursor()
+    remove_database_records(sqlite_name)
 
-page_id = 0
-book_index = 1
+    conn = sqlite3.connect(sqlite_name)
+    cur = conn.cursor()
+
+    page_id = 0
+    book_index = 1
 # book_code_prefix = u"soura"
 
-for text_file_name in file_names:
-    print "\nfile name:", text_file_name
-    parent_id =""
-    title =u""
-    page =u""
-    page_fts =u""
-    # book_code =  book_code_prefix + str(book_index)
-    book_code = text_file_name.replace(".", "_").replace("-", "_")
-    print "working on file", book_code
-    book_index += 1
-    record =u""
-    line = u""
-    stack = []
-    stack.append("NO_PARENT")
-    current_header = u"H1"
+    for text_file_name in file_names:
+        print "\nfile name:", text_file_name
+        parent_id =""
+        title =u""
+        page =u""
+        page_fts =u""
+        # book_code =  book_code_prefix + str(book_index)
+        book_code = text_file_name.replace(".", "_").replace("-", "_")
+        print "working on file", book_code
+        book_index += 1
+        record =u""
+        line = u""
+        stack = []
+        stack.append("NO_PARENT")
+        current_header = u"H1"
 
-    with open(text_file_name, 'rU') as file:
-        file.readlines
-        for line in file:
-            line = line.strip()
-            if len(line) > 0 :
-                # print "line is[", line, "]"
-                if line.find("H") == -1 : # NOT FOUND
+        with open(text_file_name, 'rU') as file:
+            file.readlines
+            for line in file:
+                line = line.strip()
+                if len(line) > 0 :
+                    # print "line is[", line, "]"
+                    if line.find("H") == -1 : # NOT FOUND
 
-                    if(text_file_name.endswith(".txt")):
-                        record += line.decode("utf-8") + "\r\n<br>"
-                    else:
-                        record += line.decode("utf-8") + "\r\n"
-                else:
-                    # print "line is [", line, "]"
-                    # handle stack of parent ids
-                    line = line.strip()
-                    #split lines to extract first line as title
-                    if(len(record) > 0) : # if empty, just skip it
-                        # print "[", record, "]"
-                        lines = record.splitlines() #split on new line
-                        # print "lines count is", len(lines)
-                        title = lines[0]
-                        # print "title is:", title
-                        lines[0] = ""
-                        joinedData = ""
-                        for single_line in lines:
-                            joinedData += " " + single_line
-
-                        record_fts = strip_diacritics(unicode(joinedData))
-                        parent_id = stack[len(stack)-1]
-                        topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
-                        print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title  
-                        cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
-                        record = "" # for the new line processing
-                        # print page_id
-                        # print record
-                        #sys.stdout.write('.')
-                        sys.stdout.flush()
-                        #handle parent id
-                        if line.strip() > current_header:
-                            print "Lower level : new level=", line, "; current level", current_header
-                            stack.append(page_id)
-                            current_header = line #update current line
-                        elif line.strip() < current_header:
-                            print "Higher level: new level=", line, "; current level", current_header
-                            current_header = line
-                            stack.pop()
+                        if(text_file_name.endswith(".txt")):
+                            record += line.decode("utf-8") + "\r\n<br>"
                         else:
-                            print "Same level  :", line, ";",  current_header
+                            record += line.decode("utf-8") + "\r\n"
+                    else:
+                        # print "line is [", line, "]"
+                        # handle stack of parent ids
+                        line = line.strip()
+                        #split lines to extract first line as title
+                        if(len(record) > 0) : # if empty, just skip it
+                            # print "[", record, "]"
+                            lines = record.splitlines() #split on new line
+                            # print "lines count is", len(lines)
+                            title = lines[0]
+                            # print "title is:", title
+                            lines[0] = ""
+                            joinedData = ""
+                            for single_line in lines:
+                                joinedData += " " + single_line
 
-                        page_id += 1
+                            record_fts = strip_diacritics(unicode(joinedData))
+                            parent_id = stack[len(stack)-1]
+                            topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
+                            print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title  
+                            cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
+                            record = "" # for the new line processing
+                            # print page_id
+                            # print record
+                            #sys.stdout.write('.')
+                            sys.stdout.flush()
+                            #handle parent id
+                            if line.strip() > current_header:
+                                print "Lower level : new level=", line, "; current level", current_header
+                                stack.append(page_id)
+                                current_header = line #update current line
+                            elif line.strip() < current_header:
+                                print "Higher level: new level=", line, "; current level", current_header
+                                current_header = line
+                                stack.pop()
+                            else:
+                                print "Same level  :", line, ";",  current_header
+
+                            page_id += 1
 
 
-    # Last record handling
-    # if len(page) > 0:
-        # page_fts = remove_vowels(record)
-        # topic = (page_id, parent_id, book_code, "", "", "")
-        # cur.execute('insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
+        # Last record handling
+        # if len(page) > 0:
+            # page_fts = remove_vowels(record)
+            # topic = (page_id, parent_id, book_code, "", "", "")
+            # cur.execute('insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
 
 
-conn.commit()
-conn.close()  # call basic function
+    conn.commit()
+    conn.close()  # call basic function
 
-print " "
-print "Conversion completed for records counted:" + str(page_id)
+    print " "
+    print "Conversion completed for records counted:" + str(page_id)
+
+
+
+##################################################################################
+ 
+convert_text_to_sqlite()
