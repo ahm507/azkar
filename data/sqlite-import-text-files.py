@@ -97,10 +97,10 @@ def convert_text_to_sqlite(file_names, sqlite_name):
 
                             record_fts = strip_diacritics(unicode(joinedData))
                             parent_id = stack[len(stack)-1]
-                            topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
                             joinedData = joinedData.strip()
                             record_fts = record_fts.strip()
                             joinedData = joinedData.replace("\r\n", "\r\n<br>")
+                            topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
                             print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title
                             cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
                             record = "" # for the new line processing
