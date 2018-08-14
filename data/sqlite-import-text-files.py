@@ -76,13 +76,9 @@ def convert_text_to_sqlite(file_names, sqlite_name):
             for line in file:
                 line = line.strip()
                 if len(line) > 0 :
-                    # print "line is[", line, "]"
+                    # print "line is[" + line + "]"
                     if line.find("H") == -1 : # NOT FOUND
-
-                        if(text_file_name.endswith(".txt")):
-                            record += line.decode("utf-8") + "\r\n<br>"
-                        else:
-                            record += line.decode("utf-8") + "\r\n"
+                        record += line.decode("utf-8") + "\r\n"
                     else:
                         # print "line is [", line, "]"
                         # handle stack of parent ids
@@ -102,7 +98,10 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                             record_fts = strip_diacritics(unicode(joinedData))
                             parent_id = stack[len(stack)-1]
                             topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
-                            print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title  
+                            joinedData = joinedData.strip()
+                            record_fts = record_fts.strip()
+                            joinedData = joinedData.replace("\r\n", "\r\n<br>")
+                            print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title
                             cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
                             record = "" # for the new line processing
                             # print page_id
@@ -111,19 +110,19 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                             sys.stdout.flush()
                             #handle parent id
                             if line.strip() > current_header_level:
-                                print "Lower level : new level=", line, "; current level", current_header_level
+                                #print "Lower level : new level=", line, "; current level", current_header_level
                                 stack.append(page_id)
                                 current_header_level = line #update current line
                             elif line.strip() < current_header_level:
-                                print "Higher level: new level=", line, "; current level", current_header_level
+                                #print "Higher level: new level=", line, "; current level", current_header_level
                                 pop_count = get_pop_count(current_header_level, line)
                                 current_header_level = line
                                 print "poping count", pop_count
                                 while pop_count > 0:
                                     stack.pop()
                                     pop_count -= 1
-                            else:
-                                print "Same level  :", line, ";",  current_header_level
+                            #else:
+                                #print "Same level  :", line, ";",  current_header_level
 
                             page_id += 1
 
