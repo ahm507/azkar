@@ -128,17 +128,12 @@ def convert_text_to_sqlite(file_names, sqlite_name):
                             page_id += 1
 
 
-        # Last record handling
-        # if len(page) > 0:
-            # page_fts = remove_vowels(record)
-            # topic = (page_id, parent_id, book_code, "", "", "")
-            # cur.execute('insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
-
 
     conn.commit()
     conn.close()  # call basic function
 
-    print " "
+    print ""
+    print "Warning: you have to add an empty record at the end of file to ensure flushing of data, as example H3 or H4"
     print "Conversion completed for records counted:" + str(page_id)
 
 
