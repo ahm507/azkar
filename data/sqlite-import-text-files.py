@@ -117,7 +117,7 @@ class Parser:
                             record_fts = record_fts.strip()
                             # joinedData = joinedData.replace("\r\n", "\r\n<br>")
                             topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
-                            #print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title
+                            print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title
                             cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
                             record = "" # for the new line processing
                             sys.stdout.flush()
