@@ -43,7 +43,7 @@ public class BooksTreeService {
     @NonNull
     private BooksTreeNode getBooksTreeNodeObject(@NonNull Cursor cursor) {
         return new BooksTreeNode(cursor.getString(0), cursor.getString(2),
-                        cursor.getString(3), cursor.getString(4));
+                        cursor.getString(3), cursor.getString(4), cursor.getString(1));
     }
 
     public ArrayList<BooksTreeNode> findNode(String book_code, String page_id) {
