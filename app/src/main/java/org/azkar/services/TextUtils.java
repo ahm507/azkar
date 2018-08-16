@@ -1,8 +1,13 @@
 package org.azkar.services;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 public class TextUtils {
+
+    private static final String TAG = "TextUtils";
 
     enum FontSize {
         NORMAL, LARGE
@@ -44,7 +49,7 @@ public class TextUtils {
     }
 
     @NonNull
-    public String decorate(@NonNull String searchWords, @NonNull String title, @NonNull String content) {
+    public String decorate(@NonNull String searchWords, @NonNull String title, @NonNull String content, ArrayList<BooksTreeNode> parents) {
 
         content = content.trim();
         content = removeTrailingHashes(content);
@@ -61,15 +66,20 @@ public class TextUtils {
         final String htmlPagePrefix = "<html>" + head + "<body>";
         final String htmlPagePostfix = "</body></html>";
 
-        content = content.replaceAll("##", "<br><hr>");
+//        content = content.replaceAll("##", "<br><hr>");
         content = content.replaceAll("\n", "<br>");
         if(searchWords.trim().length() > 0) { //highlight search text
             content = TextUtils.highlight(content, searchWords);
         }
 
+        String decoratedTitle = String.format("<font color='blue'>%s</font>", TextUtils.removeTrailingDot(title));
+        String nodePathHtml = generateHeaderPath(decoratedTitle, parents);
+
         //Add title
-        content = "<font color=\"blue\">" + TextUtils.removeTrailingDot(title) + "</font><hr>" + content;
-        return htmlPagePrefix + content + htmlPagePostfix;
+        content = nodePathHtml + "<hr>" + content;
+        String html = htmlPagePrefix + content + htmlPagePostfix;
+        Log.i(TAG, html);
+        return html;
     }
 
     @NonNull
@@ -88,5 +98,17 @@ public class TextUtils {
         return content;
     }
 
+    public String generateHeaderPath(String title, ArrayList<BooksTreeNode> parents) {
+        StringBuilder header = new StringBuilder();
+        String space = "";
+        for(int i = parents.size()-1 ; i >= 0 ; i--) { //skip last root parent
+//            header.append(String.format("<a href='%s'>%s</a><br>", parents.get(i).getPage_id(), parents.get(i).getTitle()));
+            header.append(String.format("%s%s<br>", space, parents.get(i).getTitle()));
+            space += "&nbsp;&nbsp;";
+        }
+
+        header.append(space + title);
+        return header.toString();
+    }
 
 }

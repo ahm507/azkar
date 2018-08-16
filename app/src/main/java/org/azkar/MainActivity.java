@@ -200,9 +200,10 @@ public class MainActivity extends AppCompatActivity
 
 			} else {
 				BooksTreeNode record = records.get(0);
+                ArrayList<BooksTreeNode> parents = booksService.findParents(book_code, record.getParent_id());
 				String content = record.getPage();
-				String htmlContent = textUtils.decorate(searchWords, record.getTitle(), content);
-//				displayTextView.loadData(htmlContent, "text/html; charset=UTF-8", null);
+                String htmlContent = textUtils.decorate(searchWords, record.getTitle(), content, parents);
+
                 displayTextView.loadDataWithBaseURL("file:///android_asset/",
                         htmlContent, "text/html", "UTF-8", null);
 				curBookCode = record.getBook_code();

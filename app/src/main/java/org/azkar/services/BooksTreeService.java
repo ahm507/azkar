@@ -42,8 +42,9 @@ public class BooksTreeService {
 
     @NonNull
     private BooksTreeNode getBooksTreeNodeObject(@NonNull Cursor cursor) {
-        return new BooksTreeNode(cursor.getString(0), cursor.getString(2),
+	    BooksTreeNode node = new BooksTreeNode(cursor.getString(0), cursor.getString(2),
                         cursor.getString(3), cursor.getString(4), cursor.getString(1));
+	    return node;
     }
 
     public ArrayList<BooksTreeNode> findNode(String book_code, String page_id) {
@@ -119,5 +120,18 @@ public class BooksTreeService {
 		}
 		return count;
 	}
+
+	public ArrayList<BooksTreeNode> findParents(String book_code, String parent_id) {
+        String parentId = parent_id;
+        ArrayList<BooksTreeNode> parents = new ArrayList<>();
+        ArrayList<BooksTreeNode> singleNodeArray = findNode(book_code, parentId);
+        while (! "NO_PARENT".equals(singleNodeArray.get(0).getParent_id())) {
+            parents.add(singleNodeArray.get(0));
+            parentId = singleNodeArray.get(0).getParent_id();
+            singleNodeArray = findNode(book_code, parentId);
+        }
+        return parents;
+    }
+
 
 }
