@@ -13,7 +13,7 @@ class Parser:
 
     def __init__(self):
         self.stack = []
-
+        self.current_header_level = u"H1"
 
     # def remove_vowels(arabic_text_with_vowels):
     #     vowels = u"[\u064B-\u065F]"  # vowel character range
@@ -46,6 +46,23 @@ class Parser:
         return int(cur_level) - int(new_level)
 
 
+
+    def handle_level(self, line, page_id):
+        if line.strip() > self.current_header_level:
+            #print "Lower level : new level=", line, "; current level", current_header_level
+            self.stack.append(page_id)
+            self.current_header_level = line #update current line
+        elif line.strip() < self.current_header_level:
+            #print "Higher level: new level=", line, "; current level", current_header_level
+            pop_count = self.get_pop_count(self.current_header_level, line)
+            self.current_header_level = line
+            print "poping count", pop_count
+            while pop_count > 0:
+                self.stack.pop()
+                pop_count -= 1
+        #else:
+         #print "Same level  :", line, ";",  current_header_level
+
     def convert_text_to_sqlite(self, file_names, sqlite_name):
 
         print ("import text files and insert records into sqlite file")
@@ -72,7 +89,7 @@ class Parser:
             record =u""
             line = u""
             self.stack.append("NO_PARENT")
-            current_header_level = u"H1"
+
 
             with open(text_file_name, 'rU') as file:
                 file.readlines
@@ -111,21 +128,9 @@ class Parser:
                                 # print record
                                 #sys.stdout.write('.')
                                 sys.stdout.flush()
+
                                 #handle parent id
-                                if line.strip() > current_header_level:
-                                    #print "Lower level : new level=", line, "; current level", current_header_level
-                                    self.stack.append(page_id)
-                                    current_header_level = line #update current line
-                                elif line.strip() < current_header_level:
-                                    #print "Higher level: new level=", line, "; current level", current_header_level
-                                    pop_count = self.get_pop_count(current_header_level, line)
-                                    current_header_level = line
-                                    print "poping count", pop_count
-                                    while pop_count > 0:
-                                        self.stack.pop()
-                                        pop_count -= 1
-                                #else:
-                                    #print "Same level  :", line, ";",  current_header_level
+                                self.handle_level(line, page_id)   # updates current_header_level and stack
 
                                 page_id += 1
 
