@@ -94,40 +94,40 @@ class Parser:
             with open(text_file_name, 'rU') as file:
                 file.readlines
                 for line in file:
-                    line = line.strip()
-                    if len(line) > 0 :
-                        # print "line is[" + line + "]"
-                        if line.find("H") != -1 : # H1, H2, H3, H4
-                            # print "line is [", line, "]"
-                            # handle stack of parent ids
-                            line = line.strip()
-                            #split lines to extract first line as title
-                            if(len(record) > 0) :
-                                lines = record.splitlines() #split on new line
-                                title = lines[0]
-                                # print "title is:", title
-                                lines[0] = ""
-                                joinedData = ""
-                                for single_line in lines:
-                                    joinedData += "\r\n" + single_line
+                    # line = line.strip()
+                    # if len(line) > 0 :
+                    # print "line is[" + line + "]"
+                    if line.find("H") != -1 : # H1, H2, H3, H4
+                        # print "line is [", line, "]"
+                        # handle stack of parent ids
+                        line = line.strip()
+                        #split lines to extract first line as title
+                        if(len(record) > 0) :
+                            lines = record.splitlines() #split on new line
+                            title = lines[0]
+                            # print "title is:", title
+                            lines[0] = ""
+                            joinedData = ""
+                            for single_line in lines:
+                                joinedData += "\r\n" + single_line
 
-                                record_fts = self.strip_diacritics(unicode(joinedData))
-                                parent_id = self.stack[len(self.stack)-1]
-                                joinedData = joinedData.strip()
-                                record_fts = record_fts.strip()
-                                # joinedData = joinedData.replace("\r\n", "\r\n<br>")
-                                topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
-                                print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title
-                                cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
-                                record = "" # for the new line processing
-                                sys.stdout.flush()
+                            record_fts = self.strip_diacritics(unicode(joinedData))
+                            parent_id = self.stack[len(self.stack)-1]
+                            joinedData = joinedData.strip()
+                            record_fts = record_fts.strip()
+                            # joinedData = joinedData.replace("\r\n", "\r\n<br>")
+                            topic = (page_id, parent_id, book_code, title, joinedData, record_fts)
+                            #print "RECORD: page_id=", page_id, ";parent_id=", parent_id, ";title=", title
+                            cur.execute(u'insert into pages (page_id, parent_id, book_code, title, page, page_fts) Values (?, ?, ?, ?, ?, ?)', topic)
+                            record = "" # for the new line processing
+                            sys.stdout.flush()
 
-                                #handle parent id
-                                self.handle_level(line, page_id)   # updates current_header_level and stack
+                            #handle parent id
+                            self.handle_level(line, page_id)   # updates current_header_level and stack
 
-                                page_id += 1
-                        else:   # H!, H2, H3, H4
-                            record += line.decode("utf-8") + "\r\n"
+                            page_id += 1
+                    else:   # Normal text line
+                        record += line.decode("utf-8")
 
         conn.commit()
         conn.close()  # call basic function
