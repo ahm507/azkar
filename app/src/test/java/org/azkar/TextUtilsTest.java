@@ -32,7 +32,15 @@ public class TextUtilsTest {
 		assertEquals(content2, TextUtils.removeTrailingHashes(content));
 	}
 
-	@Test
+    @Test
+    public void testTrimTrailingHashes2() {
+        final String content = "";
+        final String content2 = "";
+        assertEquals(content2, TextUtils.removeTrailingHashes(content));
+    }
+
+
+    @Test
 	public void testReplacement() {
 
 		final String content = "word1 word2 word3";
