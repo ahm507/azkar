@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -78,8 +79,26 @@ public class MainActivity extends AppCompatActivity
 		//Open DB and display initial view
 		booksService = new BooksTreeService(this);
 		booksService.open();
-        displayHomePage();
+        displayLastViewedPage();
 	}
+
+	final String MY_PREFS_NAME = "Azkar";
+
+    public void displayLastViewedPage() {
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String bookCode = prefs.getString("book_code", "azkar_txt");
+        String pageId =   prefs.getString("page_id", "0");
+        boolean isLeaf = prefs.getBoolean("is_leaf", false);
+
+        if(isLeaf) {
+            setDisplayModeToHtml();
+            displayContent(bookCode, pageId, "");
+        }
+        else {
+            setDisplayModeToList();
+            displayKids(bookCode, pageId);
+        }
+    }
 
 	public void displayHomePage() {
         displayKids("azkar_txt", "0");
@@ -87,7 +106,15 @@ public class MainActivity extends AppCompatActivity
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        boolean isLeaf = booksService.isLeafNode(curBookCode, curPageId);
+        editor.putBoolean("is_leaf", isLeaf);
+        editor.putString("book_code", curBookCode);
+        editor.putString("page_id", curPageId);
+        editor.apply();
+
+
+        super.onDestroy();
 		booksService.close();
 	}
 
@@ -150,6 +177,21 @@ public class MainActivity extends AppCompatActivity
 
 		return super.onOptionsItemSelected(item);
 	}
+
+	public void setDisplayModeToHtml() {
+        WebView display = (WebView) findViewById(R.id.textViewDisplay);
+        ListView tabweeb = (ListView) findViewById(R.id.listViewTabweeb);
+        display.setVisibility(View.VISIBLE);
+        tabweeb.setVisibility(View.GONE);
+    }
+
+    public void setDisplayModeToList() {
+        WebView display = (WebView) findViewById(R.id.textViewDisplay);
+        ListView tabweeb = (ListView) findViewById(R.id.listViewTabweeb);
+        display.setVisibility(View.GONE);
+        tabweeb.setVisibility(View.VISIBLE);
+    }
+
 
 	void displayPreviousContents() {
 		String page_id = historyStack.pop();
