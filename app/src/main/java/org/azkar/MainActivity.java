@@ -89,6 +89,12 @@ public class MainActivity extends AppCompatActivity
         String bookCode = prefs.getString("book_code", "azkar_txt");
         String pageId =   prefs.getString("page_id", "0");
         boolean isLeaf = prefs.getBoolean("is_leaf", false);
+        String fontSize = prefs.getString("font_size", "normal");
+        if (fontSize.equals("normal")) {
+            textUtils.setFontNormal();
+        } else {
+            textUtils.setFontLarge();
+        }
 
         if(isLeaf) {
             setDisplayModeToHtml();
@@ -106,13 +112,13 @@ public class MainActivity extends AppCompatActivity
 
 	@Override
 	protected void onDestroy() {
-        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
         boolean isLeaf = booksService.isLeafNode(curBookCode, curPageId);
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
         editor.putBoolean("is_leaf", isLeaf);
         editor.putString("book_code", curBookCode);
         editor.putString("page_id", curPageId);
+        editor.putString("font_size", textUtils.getFontSize());
         editor.apply();
-
 
         super.onDestroy();
 		booksService.close();
