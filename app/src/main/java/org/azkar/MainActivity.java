@@ -112,6 +112,12 @@ public class MainActivity extends AppCompatActivity
 
 	@Override
 	protected void onDestroy() {
+        savePreferences();
+        super.onDestroy();
+		booksService.close();
+	}
+
+    private void savePreferences() {
         boolean isLeaf = booksService.isLeafNode(curBookCode, curPageId);
         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
         editor.putBoolean("is_leaf", isLeaf);
@@ -119,12 +125,9 @@ public class MainActivity extends AppCompatActivity
         editor.putString("page_id", curPageId);
         editor.putString("font_size", textUtils.getFontSize());
         editor.apply();
+    }
 
-        super.onDestroy();
-		booksService.close();
-	}
-
-	@Override
+    @Override
 	public void onBackPressed() {
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		if (drawer.isDrawerOpen(GravityCompat.START)) {
