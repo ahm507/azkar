@@ -11,6 +11,7 @@ import java.util.Formatter;
 
 public class BooksTreeService {
 
+    static int totalRecordsCount = 0;
 	private SQLiteDatabase db;
 	private SQLiteInstaller sqLiteInstaller;
 
@@ -133,5 +134,47 @@ public class BooksTreeService {
         return parents;
     }
 
+    public String getNextLeafId(String bookCode, String curPageID) {
+        if(totalRecordsCount == 0) {
+            totalRecordsCount = getTotalNodesCount(bookCode);
+        }
+        int nextPage = Integer.parseInt(curPageID) + 1;
+        while(nextPage < totalRecordsCount) {
+            if (isLeafNode(bookCode, String.valueOf(nextPage))) {
+                return String.valueOf(nextPage);
+            }
+            nextPage++;
+        }
+        return curPageID; //no next available
+    }
+
+    public String getPreviousLeafId(String bookCode, String curPageId ) {
+        int previousPage = Integer.parseInt(curPageId) - 1;
+        while (previousPage >= 0) {
+            if (isLeafNode(bookCode, String.valueOf(previousPage))) {
+                return String.valueOf(previousPage);
+            }
+            previousPage--;
+
+        }
+        return curPageId;
+    }
+
+    private int getTotalNodesCount(@NonNull String bookCode) {
+
+	    if(bookCode == null || bookCode.isEmpty()) throw new IllegalArgumentException();
+
+        String sql = "SELECT count(*) AS total_count FROM pages WHERE book_code='" + bookCode + "'";
+        Cursor cursor = db.rawQuery(sql, null);
+        int count = 0;
+        if (cursor != null && cursor.moveToNext()) {
+            String countString = cursor.getString(0);
+            count = Integer.parseInt(countString);
+        }
+
+        if(cursor!= null) cursor.close();
+
+        return count;
+    }
 
 }

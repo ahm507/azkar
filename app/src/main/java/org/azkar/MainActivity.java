@@ -366,11 +366,10 @@ public class MainActivity extends AppCompatActivity
 				float deltaX = x2 - x1;
 				if (Math.abs(deltaX) > MIN_DISTANCE) {
 					if (x2 > x1) { // Left to Right swipe action : NEXT
-						displayContent(curBookCode, String.valueOf(Integer.parseInt(curPageId) + 1), "");
+						displayNext();
+
 					} else {  // Right to left swipe action: PREVIOUS
-						if (Integer.parseInt(curPageId) > 1) {
-							displayContent(curBookCode, String.valueOf(Integer.parseInt(curPageId) - 1), "");
-						}
+                        displayPrevious();
 					}
 				}
 				break;
@@ -378,7 +377,7 @@ public class MainActivity extends AppCompatActivity
 		return super.onTouchEvent(event);
 	}
 
-	void showAboutDialogue() {
+    void showAboutDialogue() {
 		AlertDialog.Builder aboutAlert = new AlertDialog.Builder(
 				MainActivity.this);
 		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
@@ -407,4 +406,19 @@ public class MainActivity extends AppCompatActivity
             searchDatabase(view, newPageNumber);
         }
     }
+
+    private void displayNext() {
+        String nextId = booksService.getNextLeafId(curBookCode, curPageId);
+        if( ! nextId.equals(curPageId)) {
+            displayContent(curBookCode, nextId, "");
+        }
+    }
+
+    private void displayPrevious() {
+        String previousId = booksService.getPreviousLeafId(curBookCode, curPageId);
+        if( ! previousId.equals(curPageId)) {
+            displayContent(curBookCode, previousId, "");
+        }
+    }
+
 }
