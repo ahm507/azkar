@@ -1,12 +1,13 @@
-package org.azkar;
+package org.tawansy.azkar;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.view.View;
 
-import org.azkar.services.BooksTreeNode;
-import org.azkar.services.BooksTreeService;
-import org.azkar.services.TextUtils;
+import org.tawansy.azkar.MainActivity;
+import org.tawansy.azkar.services.BooksTreeNode;
+import org.tawansy.azkar.services.BooksTreeService;
+import org.tawansy.azkar.services.TextUtils;
 
 import java.util.ArrayList;
 

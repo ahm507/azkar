@@ -1,4 +1,4 @@
-package org.azkar.services;
+package org.tawansy.azkar.services;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import org.azkar.services.DatabaseCopyException;
+import org.tawansy.azkar.services.DatabaseCopyException;
 
 import java.io.File;
 import java.io.FileOutputStream;

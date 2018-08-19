@@ -1,4 +1,4 @@
-package org.azkar.services;
+package org.tawansy.azkar.services;
 
 import java.util.Formatter;
 

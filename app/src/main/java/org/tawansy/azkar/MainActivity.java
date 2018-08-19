@@ -1,4 +1,4 @@
-package org.azkar;
+package org.tawansy.azkar;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -29,17 +29,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.sonna.www.sonna.R;
-import org.azkar.services.BooksTreeNode;
-import org.azkar.services.BooksTreeService;
-import org.azkar.services.SQLiteInstaller;
-import org.azkar.services.SearchPaging;
-import org.azkar.services.TextUtils;
+import org.tawansy.azkar.services.BooksTreeNode;
+import org.tawansy.azkar.services.BooksTreeService;
+import org.tawansy.azkar.services.SQLiteInstaller;
+import org.tawansy.azkar.services.SearchPaging;
+import org.tawansy.azkar.services.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Stack;
 
-import org.azkar.services.DatabaseCopyException;
+import org.tawansy.azkar.services.DatabaseCopyException;
 
 
 public class MainActivity extends AppCompatActivity

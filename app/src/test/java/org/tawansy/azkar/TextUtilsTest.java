@@ -1,7 +1,7 @@
-package org.azkar;
+package org.tawansy.azkar;
 
 import org.junit.Test;
-import org.azkar.services.TextUtils;
+import org.tawansy.azkar.services.TextUtils;
 
 import static org.junit.Assert.*;
 
